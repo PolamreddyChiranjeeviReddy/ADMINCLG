@@ -88,15 +88,15 @@ const app = express();
 
 // Middleware
 app.use(helmet());
-app.use(helmet.contentSecurityPolicy({
-    directives: {
-        defaultSrc: ["'self'"],
-        imgSrc: ["'self'", "https:", "data:", "blob:"],
-        connectSrc: ["'self'", "https:"],
-        scriptSrc: ["'self'", "'unsafe-inline'"],
-        styleSrc: ["'self'", "'unsafe-inline'"]
-    }
-}));
+// app.use(helmet.contentSecurityPolicy({
+//     directives: {
+//         defaultSrc: ["'self'"],
+//         imgSrc: ["'self'", "https:", "data:", "blob:"],
+//         connectSrc: ["'self'", "https:"],
+//         scriptSrc: ["'self'", "'unsafe-inline'"],
+//         styleSrc: ["'self'", "'unsafe-inline'"]
+//     }
+// }));
 // app.use(cors({ origin: true, credentials: true }));
 app.use(cors({
     origin: ['https://adminclg.vercel.app', 'http://localhost:3000'],

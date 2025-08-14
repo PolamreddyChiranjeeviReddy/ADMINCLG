@@ -76,7 +76,9 @@ const isDepartment = (item: any): item is Department => {
 // };
 
 // --- API Configuration ---
-const API_BASE_URL = 'https://adminclg-backend.vercel.app'; // IMPORTANT: Change to your backend URL
+// const API_BASE_URL = 'https://adminclg-backend.vercel.app'; // IMPORTANT: Change to your backend URL
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://adminclg-backend.vercel.app";
+    
 
 // --- SVG Icons ---
 const Logo = () => <img src="https://upload.wikimedia.org/wikipedia/commons/a/ae/Vignan_logo.png" alt="Vignan's Logo" style={{ height: '45px', width: 'auto' }} />;
