@@ -77,7 +77,7 @@ const isDepartment = (item: any): item is Department => {
 
 // --- API Configuration ---
 // const API_BASE_URL = 'https://adminclg-backend.vercel.app'; // IMPORTANT: Change to your backend URL
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://adminclg-backend.vercel.app";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";   // Use environment variable or fallback to <localhost></localhost>
     
 
 // --- SVG Icons ---

@@ -61,7 +61,7 @@ export const StoreContext = createContext<StoreContextType | null>(null);
 const StoreContextProvider = (props: StoreContextProviderProps) => {
 
     // const url = "https://adminclg-backend.vercel.app"
-    const url = process.env.NEXT_PUBLIC_API_URL || "https://adminclg-backend.vercel.app"
+    const url = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
     
     // const [food_list, setFoodList] = useState([]);
     // const [cartItems, setCartItems] = useState({});
