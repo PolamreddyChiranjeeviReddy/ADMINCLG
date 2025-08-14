@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useCallback, CSSProperties, useRef } from 'react';
-import ReactDOM from 'react-dom';
+// import React, { useState, useEffect, useCallback, CSSProperties, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import type { CSSProperties } from 'react';
+// import ReactDOM from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { StoreContext } from '../context/StoreContext';
-import AdminLogin from './AdminLogin';
+// import AdminLogin from './AdminLogin';
 
 // --- API Configuration ---
 const API_BASE_URL = 'http://localhost:5000'; // IMPORTANT: Change to your backend URL
