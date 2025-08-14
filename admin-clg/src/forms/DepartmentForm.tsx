@@ -1,0 +1,27 @@
+import React, { useState, useEffect, useCallback, CSSProperties, useRef } from 'react';
+
+const DepartmentForm = ({ onFormSubmit, initialData, onCancel }: { onFormSubmit: (data: FormData) => void; initialData?: Department | null; onCancel: () => void }) => {
+    const [missionPoints, setMissionPoints] = useState<string[]>([]);
+    const [faculty, setFaculty] = useState<FacultyMember[]>([]);
+
+    useEffect(() => { setMissionPoints(initialData?.mission || ['']); setFaculty(initialData?.faculty || [{ sno: 1, name: '', designation: '' }]); }, [initialData]);
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => { e.preventDefault(); const formData = new FormData(e.currentTarget); formData.append('mission', JSON.stringify(missionPoints.filter(m => m))); formData.append('faculty', JSON.stringify(faculty.filter(f => f.name && f.designation))); onFormSubmit(formData); };
+    const handleFacultyChange = (index: number, field: keyof FacultyMember, value: string | number) => { setFaculty(faculty.map((f, i) => i === index ? { ...f, [field]: value } : f)); };
+    const addFaculty = () => setFaculty([...faculty, { sno: faculty.length + 1, name: '', designation: '' }]);
+    const removeFaculty = (index: number) => setFaculty(faculty.filter((_, i) => i !== index));
+    const addMissionPoint = () => setMissionPoints([...missionPoints, '']);
+    const removeMissionPoint = (index: number) => setMissionPoints(missionPoints.filter((_, i) => i !== index));
+
+    return (
+        <form onSubmit={handleSubmit} style={styles.form}>
+            <div style={styles.formRow}><div style={{...styles.formGroup, flex: 1, marginRight: '10px'}}><label style={styles.label}>Department Code (e.g., 'cse')</label><input name="code" defaultValue={initialData?.code} style={styles.input} required disabled={!!initialData} /></div><div style={{...styles.formGroup, flex: 1, marginLeft: '10px'}}><label style={styles.label}>Department Name</label><input name="name" defaultValue={initialData?.name} style={styles.input} required /></div></div>
+            <div style={styles.formGroup}><label style={styles.label}>About Department</label><textarea name="about" defaultValue={initialData?.about} style={styles.textarea} required /></div>
+            <div style={styles.formRow}><div style={{...styles.formGroup, flex: 1, marginRight: '10px'}}><label style={styles.label}>HOD Name</label><input name="hodName" defaultValue={initialData?.hodName} style={styles.input} required /></div><div style={{...styles.formGroup, flex: 1, marginLeft: '10px'}}><label style={styles.label}>Vision</label><textarea name="vision" defaultValue={initialData?.vision} style={{...styles.textarea, minHeight: '52px'}} required /></div></div>
+            <div style={styles.formGroup}><label style={styles.label}>HOD Message</label><textarea name="hodMessage" defaultValue={initialData?.hodMessage} style={styles.textarea} required /></div>
+            <div style={styles.formRow}><div style={{flex: 1, marginRight: '10px'}}><ImageUpload label="HOD Image" name="hodImage" initialImage={initialData?.hodImage ? `${API_BASE_URL}/uploads/${initialData.hodImage}`: undefined} isRequired={!initialData} /></div><div style={{flex: 1, marginLeft: '10px'}}><ImageUpload label="Department Hero Image" name="heroImage" initialImage={initialData?.heroImage ? `${API_BASE_URL}/uploads/${initialData.heroImage}` : undefined} isRequired={!initialData} /></div></div>
+            <div style={styles.formGroup}><label style={styles.label}>Mission Points</label>{missionPoints.map((point, index) => (<div key={index} style={{display: 'flex', alignItems: 'center', marginBottom: '8px'}}><input value={point} onChange={(e) => { const newPoints = [...missionPoints]; newPoints[index] = e.target.value; setMissionPoints(newPoints); }} style={{...styles.input, flex: 1}} placeholder={`Mission Point ${index + 1}`} /><button type="button" onClick={() => removeMissionPoint(index)} style={styles.removeButton} title="Delete Point"><TrashIcon /></button></div>))}<button type="button" onClick={addMissionPoint} style={styles.addButton}>Add Mission Point</button></div>
+            <div style={styles.formGroup}><label style={styles.label}>Faculty Members</label>{faculty.map((member, index) => (<div key={index} style={{...styles.formRow, marginBottom: '10px', borderBottom: '1px solid var(--border-color)', paddingBottom: '10px'}}><input type="number" value={member.sno} onChange={(e) => handleFacultyChange(index, 'sno', parseInt(e.target.value))} style={{...styles.input, flex: 0.5, marginRight: '10px'}} placeholder="S.No" /><input value={member.name} onChange={(e) => handleFacultyChange(index, 'name', e.target.value)} style={{...styles.input, flex: 2, marginRight: '10px'}} placeholder="Faculty Name" /><input value={member.designation} onChange={(e) => handleFacultyChange(index, 'designation', e.target.value)} style={{...styles.input, flex: 2}} placeholder="Designation" /><button type="button" onClick={() => removeFaculty(index)} style={styles.removeButton} title="Delete Member"><TrashIcon /></button></div>))}<button type="button" onClick={addFaculty} style={styles.addButton}>Add Faculty Member</button></div>
+            <div style={styles.formActions}><button type="submit" style={styles.submitButton}>{initialData ? 'Update Department' : 'Add Department'}</button><button type="button" onClick={onCancel} style={styles.cancelButton}>Cancel</button></div>
+        </form>
+    );
+};
