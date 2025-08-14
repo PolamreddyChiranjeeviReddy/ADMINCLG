@@ -1,11 +1,79 @@
-// import React, { useState, useEffect, useCallback, CSSProperties, useRef } from 'react';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import type { CSSProperties } from 'react';
-// import ReactDOM from 'react-dom';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { StoreContext } from '../context/StoreContext';
-// import AdminLogin from './AdminLogin';
+
+// --- Type Definitions ---
+interface StoreContextType {
+    token: string;
+    setToken: (token: string) => void;
+    setRender: (render: boolean) => void;
+}
+
+interface FacultyMember { 
+    sno: number; 
+    name: string; 
+    designation: string; 
+}
+
+interface Department { 
+    _id: string; 
+    code: string; 
+    name: string; 
+    about: string; 
+    hodMessage: string; 
+    hodName: string; 
+    hodImage: string; 
+    heroImage: string; 
+    vision: string; 
+    mission: string[]; 
+    faculty: FacultyMember[]; 
+}
+
+interface NewsEvent { 
+    _id: string; 
+    type: string; 
+    title: string; 
+    date: string; 
+    description: string; 
+    pathlink: string; 
+    image: string; 
+    bgColor: string; 
+}
+
+interface HeroImage { 
+    _id: string; 
+    title: string; 
+    desktopImage: string; 
+    mobileImage: string; 
+}
+
+interface Announcement {
+    _id: string; 
+    date: string; 
+    title: string; 
+    path: string; 
+    description: string;
+}
+
+interface Placement {
+    _id: string; 
+    student: string; 
+    company: string; 
+    package: string; 
+    image: string; 
+    companyLogo: string;
+}
+
+// Type guard functions
+const isDepartment = (item: any): item is Department => {
+    return 'code' in item && 'mission' in item && 'faculty' in item;
+};
+
+// const isHeroImage = (item: any): item is HeroImage => {
+//     return 'desktopImage' in item && 'mobileImage' in item;
+// };
 
 // --- API Configuration ---
 const API_BASE_URL = 'http://localhost:5000'; // IMPORTANT: Change to your backend URL
@@ -66,26 +134,23 @@ const ColorPicker = ({ name, initialValue = '#3498db' }: { name: string; initial
     );
 }
 
-// --- TYPE DEFINITIONS ---
-interface FacultyMember { sno: number; name: string; designation: string; }
-interface Department { _id: string; code: string; name: string; about: string; hodMessage: string; hodName: string; hodImage: string; heroImage: string; vision: string; mission: string[]; faculty: FacultyMember[]; }
-interface NewsEvent { _id: string; type: string; title: string; date: string; description: string; pathlink: string; image: string; bgColor: string; }
-interface HeroImage { _id: string; title: string; desktopImage: string; mobileImage: string; }
-interface Announcement {_id: string; date: string; title: string; path: string; description: string;}
-interface Placement {_id:string; student: string; company: string; package: string; image: string; companyLogo: string;}
-
 // --- FORM COMPONENTS ---
 const DepartmentForm = ({ onFormSubmit, initialData, onCancel }: { 
     onFormSubmit: (data: FormData) => void; 
-    initialData?: Department | HeroImage; 
+    initialData?: Department | null; 
     onCancel: () => void 
 }) => {
     const [missionPoints, setMissionPoints] = useState<string[]>([]);
     const [faculty, setFaculty] = useState<FacultyMember[]>([]);
 
     useEffect(() => { 
-        setMissionPoints(initialData?.mission || ['']); 
-        setFaculty(initialData?.faculty || [{ sno: 1, name: '', designation: '' }]); 
+        if (initialData && isDepartment(initialData)) {
+            setMissionPoints(initialData.mission || ['']); 
+            setFaculty(initialData.faculty || [{ sno: 1, name: '', designation: '' }]); 
+        } else {
+            setMissionPoints(['']); 
+            setFaculty([{ sno: 1, name: '', designation: '' }]); 
+        }
     }, [initialData]);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => { 
@@ -110,37 +175,37 @@ const DepartmentForm = ({ onFormSubmit, initialData, onCancel }: {
             <div style={styles.formRow}>
                 <div style={{...styles.formGroup, flex: 1, marginRight: '10px'}}>
                     <label style={styles.label}>Department Code (e.g., 'cse')</label>
-                    <input name="code" defaultValue={initialData?.code} style={styles.input} required disabled={!!initialData} />
+                    <input name="code" defaultValue={isDepartment(initialData) ? initialData.code : ''} style={styles.input} required disabled={!!initialData} />
                 </div>
                 <div style={{...styles.formGroup, flex: 1, marginLeft: '10px'}}>
                     <label style={styles.label}>Department Name</label>
-                    <input name="name" defaultValue={initialData?.name} style={styles.input} required />
+                    <input name="name" defaultValue={isDepartment(initialData) ? initialData.name : ''} style={styles.input} required />
                 </div>
             </div>
             <div style={styles.formGroup}>
                 <label style={styles.label}>About Department</label>
-                <textarea name="about" defaultValue={initialData?.about} style={styles.textarea} required />
+                <textarea name="about" defaultValue={isDepartment(initialData) ? initialData.about : ''} style={styles.textarea} required />
             </div>
             <div style={styles.formRow}>
                 <div style={{...styles.formGroup, flex: 1, marginRight: '10px'}}>
                     <label style={styles.label}>HOD Name</label>
-                    <input name="hodName" defaultValue={initialData?.hodName} style={styles.input} required />
+                    <input name="hodName" defaultValue={isDepartment(initialData) ? initialData.hodName : ''} style={styles.input} required />
                 </div>
                 <div style={{...styles.formGroup, flex: 1, marginLeft: '10px'}}>
                     <label style={styles.label}>Vision</label>
-                    <textarea name="vision" defaultValue={initialData?.vision} style={{...styles.textarea, minHeight: '52px'}} required />
+                    <textarea name="vision" defaultValue={isDepartment(initialData) ? initialData.vision : ''} style={{...styles.textarea, minHeight: '52px'}} required />
                 </div>
             </div>
             <div style={styles.formGroup}>
                 <label style={styles.label}>HOD Message</label>
-                <textarea name="hodMessage" defaultValue={initialData?.hodMessage} style={styles.textarea} required />
+                <textarea name="hodMessage" defaultValue={isDepartment(initialData) ? initialData.hodMessage : ''} style={styles.textarea} required />
             </div>
             <div style={styles.formRow}>
                 <div style={{flex: 1, marginRight: '10px'}}>
-                    <ImageUpload label="HOD Image" name="hodImage" initialImage={initialData?.hodImage ? `${API_BASE_URL}/uploads/${initialData.hodImage}`: undefined} isRequired={!initialData} />
+                    <ImageUpload label="HOD Image" name="hodImage" initialImage={isDepartment(initialData) && initialData.hodImage ? `${API_BASE_URL}/uploads/${initialData.hodImage}`: undefined} isRequired={!initialData} />
                 </div>
                 <div style={{flex: 1, marginLeft: '10px'}}>
-                    <ImageUpload label="Department Hero Image" name="heroImage" initialImage={initialData?.heroImage ? `${API_BASE_URL}/uploads/${initialData.heroImage}` : undefined} isRequired={!initialData} />
+                    <ImageUpload label="Department Hero Image" name="heroImage" initialImage={isDepartment(initialData) && initialData.heroImage ? `${API_BASE_URL}/uploads/${initialData.heroImage}` : undefined} isRequired={!initialData} />
                 </div>
             </div>
             <div style={styles.formGroup}>
@@ -364,20 +429,22 @@ const ItemsList = ({ items, onEditItem, onDeleteItem, columns }: { items: any[],
     </div>
 );
 
+type EditingItemType = Department | HeroImage | NewsEvent | Announcement | Placement | null;
 
 // --- Main AdminDashboard Component ---
 const AdminDashboard = () => {
-    const [profileOpen, setProfileOpen] = useState(false);
+   const [profileOpen, setProfileOpen] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [openMenu, setOpenMenu] = useState('Departments');
+    const [openMenu, setOpenMenu] = useState<string | null>('Departments');
     const [activeView, setActiveView] = useState('Departments > List');
     const [items, setItems] = useState<any[]>([]);
-    const [editingItem, setEditingItem] = useState<any | null>(null);
+    const [editingItem, setEditingItem] = useState<EditingItemType>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const {  token ,setToken, setRender } = useContext(StoreContext);
+    const context = useContext(StoreContext) as StoreContextType | null;
     const navigate = useNavigate();
+
     const menuConfig = {
         'Departments': { endpoint: 'department', 
             listColumns: [{ header: 'Code', 
@@ -443,30 +510,39 @@ const AdminDashboard = () => {
 
     useEffect(() => { if (activeView.endsWith(' > List')) { fetchData(); } }, [activeView, fetchData]);
 
-    const handleFormSubmit = async (formData: FormData) => {
+      const handleFormSubmit = async (formData: FormData) => {
         const [menu] = activeView.split(' > ');
         const config = menuConfig[menu as keyof typeof menuConfig];
         if (!config) return;
-        const isUpdating = !!editingItem; 
-        const _id = isUpdating ? editingItem._id : ''; 
-        // const code = isUpdating ? editingItem.code : (formData.get('code') as string); 
-        const method = isUpdating ? 'PUT' : 'POST';
-        let endpoint: string;
-        if (config.endpoint === 'department') { 
-            endpoint = isUpdating ? `${API_BASE_URL}/api/department/update/${_id}` : `${API_BASE_URL}/api/department/add`; 
-        } 
-        else {
-             endpoint = isUpdating ? `${API_BASE_URL}/api/${config.endpoint}/update/${_id}` : `${API_BASE_URL}/api/${config.endpoint}/add`; }
-        setLoading(true); setError(null);
+        
+        const isUpdating = !!editingItem;
+        const _id = isUpdating ? editingItem._id : '';
+        const endpoint = isUpdating 
+            ? `${API_BASE_URL}/api/${config.endpoint}/update/${_id}`
+            : `${API_BASE_URL}/api/${config.endpoint}/add`;
+
+        setLoading(true);
+        setError(null);
+
         try {
-            // console.log(endpoint,formData);
-            const response = await fetch(endpoint, { method, body: formData });
+            const response = await fetch(endpoint, { method: isUpdating ? 'PUT' : 'POST', body: formData });
             const result = await response.json();
-            if (!response.ok) throw new Error(result.message || result.error || 'An error occurred.');
+            
+            if (!response.ok) {
+                throw new Error(result.message || result.error || 'An error occurred.');
+            }
+
             alert(`Item ${isUpdating ? 'updated' : 'added'} successfully!`);
-            setEditingItem(null); setActiveView(`${menu} > List`);
-        } catch (err: any) { setError(err.message); } finally { setLoading(false); }
+            setEditingItem(null);
+            setActiveView(`${menu} > List`);
+        } catch (err: any) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
     };
+
+
     
     const handleDeleteItem = async (_id: string, code?: string) => {
         const [menu] = activeView.split(' > ');
@@ -503,11 +579,11 @@ const AdminDashboard = () => {
              if (subMenu === 'Add/Edit') {
                 if (loading && !editingItem) return <LoadingSpinner />;
                 switch (menu) {
-                    case 'Departments': return <DepartmentForm onFormSubmit={handleFormSubmit} initialData={editingItem} onCancel={handleCancel} />;
-                    case 'News & Events': return <NewsEventForm onFormSubmit={handleFormSubmit} initialData={editingItem} onCancel={handleCancel}/>;
-                    case 'Hero Images': return <HeroImageForm onFormSubmit={handleFormSubmit} initialData={editingItem} onCancel={handleCancel} />;
-                    case 'Announcements': return <AnnouncementForm onFormSubmit={handleFormSubmit} initialData={editingItem} onCancel={handleCancel} />;
-                    case 'Placements': return <PlacementForm onFormSubmit={handleFormSubmit} initialData={editingItem} onCancel={handleCancel} />;
+                    case 'Departments': return <DepartmentForm onFormSubmit={handleFormSubmit} initialData={editingItem as Department | null} onCancel={handleCancel} />;
+                    case 'News & Events': return <NewsEventForm onFormSubmit={handleFormSubmit} initialData={editingItem as NewsEvent | null} onCancel={handleCancel}/>;
+                    case 'Hero Images': return <HeroImageForm onFormSubmit={handleFormSubmit} initialData={editingItem as HeroImage | null} onCancel={handleCancel} />;
+                    case 'Announcements': return <AnnouncementForm onFormSubmit={handleFormSubmit} initialData={editingItem as Announcement | null} onCancel={handleCancel} />;
+                    case 'Placements': return <PlacementForm onFormSubmit={handleFormSubmit} initialData={editingItem as Placement | null} onCancel={handleCancel} />;
                     default: return <div>Form not found.</div>;
                 }
             }
@@ -524,10 +600,13 @@ const AdminDashboard = () => {
     
     const menuItems = { 'Departments': ['Add/Edit', 'List'], 'News & Events': ['Add/Edit', 'List'], 'Hero Images': ['Add/Edit', 'List'], 'Announcements':['Add/Edit', 'List'], 'Placements':['Add/Edit', 'List'], };
     const logout = () => {
-    localStorage.removeItem("token");
-    setToken("");
-    setRender(false);
-    // navigate('/');
+        if (context) {
+            const { setToken, setRender } = context;
+            localStorage.removeItem("token");
+            setToken("");
+            setRender(false);
+        }
+        // navigate('/');
     }
     return (
         <>
