@@ -81,12 +81,27 @@ import newsEventsRoute from './routes/newsEventsRoute';
 import heroImageRoute from './routes/heroImageRoute';
 import announcementRoute from './routes/announcementRoute';
 import placementRoute from './routes/placementRoute';
+import helmet from 'helmet';
 
 dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors({ origin: true, credentials: true }));
+app.use(helmet());
+app.use(helmet.contentSecurityPolicy({
+    directives: {
+        defaultSrc: ["'self'"],
+        imgSrc: ["'self'", "https:", "data:", "blob:"],
+        connectSrc: ["'self'", "https:"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'"]
+    }
+}));
+// app.use(cors({ origin: true, credentials: true }));
+app.use(cors({
+    origin: ['https://adminclg.vercel.app', 'http://localhost:3000'],
+    credentials: true
+}));
 // app.use(express.json());
 app.use(cookieParser());
 // app.use(cors());
@@ -111,3 +126,7 @@ mongoose.connect(process.env.MONGO_URI || '')
     app.listen(5000, () => console.log('Server running on port 5000'));
   })
   .catch(err => console.error('MongoDB connection error:', err));
+
+// Add Helmet middleware
+
+

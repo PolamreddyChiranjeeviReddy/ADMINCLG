@@ -66,10 +66,25 @@ const newsEventsRoute_1 = __importDefault(require("./routes/newsEventsRoute"));
 const heroImageRoute_1 = __importDefault(require("./routes/heroImageRoute"));
 const announcementRoute_1 = __importDefault(require("./routes/announcementRoute"));
 const placementRoute_1 = __importDefault(require("./routes/placementRoute"));
+const helmet_1 = __importDefault(require("helmet"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 // Middleware
-app.use((0, cors_1.default)({ origin: true, credentials: true }));
+app.use((0, helmet_1.default)());
+app.use(helmet_1.default.contentSecurityPolicy({
+    directives: {
+        defaultSrc: ["'self'"],
+        imgSrc: ["'self'", "https:", "data:", "blob:"],
+        connectSrc: ["'self'", "https:"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'"]
+    }
+}));
+// app.use(cors({ origin: true, credentials: true }));
+app.use((0, cors_1.default)({
+    origin: ['https://adminclg.vercel.app', 'http://localhost:3000'],
+    credentials: true
+}));
 // app.use(express.json());
 app.use((0, cookie_parser_1.default)());
 // app.use(cors());
@@ -92,4 +107,5 @@ mongoose_1.default.connect(process.env.MONGO_URI || '')
     app.listen(5000, () => console.log('Server running on port 5000'));
 })
     .catch(err => console.error('MongoDB connection error:', err));
+// Add Helmet middleware
 //# sourceMappingURL=server.js.map
