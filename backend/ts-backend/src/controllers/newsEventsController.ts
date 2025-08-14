@@ -33,7 +33,7 @@ export const getAllEvents = async (_req: Request, res: Response) => {
   }
 };
 
-export const updateEvent = async (req, res) => {
+export const updateEvent = async (req:Request, res:Response) => {
   try {
     const { _id } = req.params;
     const { type, title, date, description, pathlink, bgColor } = req.body;
@@ -68,9 +68,10 @@ export const updateEvent = async (req, res) => {
 
     const updated = await newsEvents.save();
     res.status(200).json(updated);
-  } catch (err) {
-    console.error('Update error:', err);
-    res.status(500).json({ error: err.message || 'Something went wrong while updating' });
+  } catch (err:unknown) {
+    // console.error('Update error:', err);
+    const error = err as Error;
+    res.status(500).json({ error: error.message || 'Something went wrong while updating' });
   }
 };
 

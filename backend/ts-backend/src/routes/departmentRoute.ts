@@ -28,6 +28,8 @@ import express from 'express';
 import multer from 'multer';
 import path from 'path';
 import { addDepartment, updateDepartmentByCode, getDepartmentByCode, getDepartment, deleteDepartment } from '../controllers/departmentController';
+import { MulterRequest } from '../types/multer';
+import { RequestHandler } from 'express';
 
 const router = express.Router();
 
@@ -51,14 +53,14 @@ router.post(
   upload.fields([
     { name: 'heroImage', maxCount: 1 },
     { name: 'hodImage', maxCount: 1 }
-  ]),
-  addDepartment
+  ]) as unknown as RequestHandler,
+  addDepartment as RequestHandler
 );
 
 router.put('/update/:_id', upload.fields([
   { name: 'heroImage', maxCount: 1 },
   { name: 'hodImage', maxCount: 1 }
-]), updateDepartmentByCode);
+]) as unknown as RequestHandler, updateDepartmentByCode as RequestHandler);
 
 router.delete('/delete/:_id',deleteDepartment);
 

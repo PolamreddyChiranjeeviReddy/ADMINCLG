@@ -1,16 +1,18 @@
 import { Request, Response } from "express";
+import { MulterRequest } from "../types/multer";
 import HeroImage from "../models/heroImageModel";
 import path from 'path';
 import fs from 'fs';
 
 // Add new hero image
-export const createHeroImage = async (req: Request, res: Response) => {
+export const createHeroImage = async (req: MulterRequest, res: Response) => {
   try {
     const {title}=req.body;
-    const desktopImage = req.files?.desktopImage?.[0]?.filename;
-    const mobileImage = req.files?.mobileImage?.[0]?.filename;
-
-    if (!desktopImage || !mobileImage) {
+    // const desktopImage = req.files?.desktopImage?.[0]?.filename;
+    // const mobileImage = req.files?.mobileImage?.[0]?.filename;
+    const desktopImage = req.files && 'desktopImage' in req.files ? req.files['desktopImage'][0].filename : undefined;
+    const mobileImage = req.files && 'mobileImage' in req.files ? req.files['mobileImage'][0].filename : undefined;
+        if (!desktopImage || !mobileImage) {
       return res.status(400).json({ message: "Both images are required." });
     }
 
@@ -18,8 +20,8 @@ export const createHeroImage = async (req: Request, res: Response) => {
     await newImage.save();
 
     res.status(201).json(newImage);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to upload hero image" });
+      } catch (error) {
+        res.status(500).json({ error: error instanceof Error ? error.message : 'Something went wrong' });
   }
 };
 
@@ -33,13 +35,14 @@ export const getHeroImages = async (_req: Request, res: Response) => {
   }
 };
 
-export const updateHeroImage = async (req, res) => {
+export const updateHeroImage = async (req:MulterRequest, res:Response) => {
   try {
     const { _id } = req.params;
     const {title}=req.body;
-    const desktopImage = req.files?.desktopImage?.[0]?.filename;
-    const mobileImage = req.files?.mobileImage?.[0]?.filename;
-
+    // const desktopImage = req.files?.desktopImage?.[0]?.filename;
+    // const mobileImage = req.files?.mobileImage?.[0]?.filename;
+    const desktopImage = req.files && 'desktopImage' in req.files ? req.files['desktopImage'][0].filename : undefined;
+    const mobileImage = req.files && 'mobileImage' in req.files ? req.files['mobileImage'][0].filename : undefined;
     const heroImage = await HeroImage.findOne({ _id });
     if (!heroImage) {
       return res.status(404).json({ error: 'Hero Image not found' });
@@ -54,7 +57,7 @@ export const updateHeroImage = async (req, res) => {
       fs.unlinkSync(heroPath);
       }
 
-      heroImage.desktopImage = req.files.desktopImage[0].filename;
+      heroImage.desktopImage = desktopImage;
     }
 
     if (req.files?.mobileImage) {
@@ -62,15 +65,16 @@ export const updateHeroImage = async (req, res) => {
         if (heroImage.mobileImage && fs.existsSync(hodPath)) {
         fs.unlinkSync(hodPath);
       }
-      heroImage.mobileImage = req.files.mobileImage[0].filename;
+      heroImage.mobileImage = mobileImage;
     }
 
     const updated = await heroImage.save();
     res.status(200).json(updated);
 
-  } catch (err) {
-  console.error('Update error:', err);  // already done ✅
-  res.status(500).json({ error: err.message || 'Something went wrong while updating' }); // <-- update this
+  } catch (err:unknown) {
+  // console.error('Update error:', err);  // already done ✅
+        const error = err as Error;
+  res.status(500).json({ error: error.message || 'Something went wrong while updating' }); // <-- update this
 }
 
 };

@@ -1,6 +1,8 @@
 import express from "express";
 import multer from 'multer';
 import path from 'path';
+import { RequestHandler } from 'express';
+
 // import upload from "../middlewares/upload";
 import {
   createHeroImage,
@@ -29,8 +31,8 @@ router.post(
   upload.fields([
     { name: "desktopImage", maxCount: 1 },
     { name: "mobileImage", maxCount: 1 },
-  ]),
-  createHeroImage
+  ]) as unknown as RequestHandler,
+  createHeroImage as RequestHandler
 );
 
 router.get("/list", getHeroImages);
@@ -38,6 +40,8 @@ router.delete("/delete/:_id", deleteHeroImage);
 router.put("/update/:_id",upload.fields([
     { name: "desktopImage", maxCount: 1 },
     { name: "mobileImage", maxCount: 1 },
-  ]),updateHeroImage);
+  ])as unknown as RequestHandler,
+  updateHeroImage as RequestHandler
+);
 
 export default router;

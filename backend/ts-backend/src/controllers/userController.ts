@@ -108,8 +108,9 @@ export const seedAdmin = async (req: Request, res: Response) => {
       await user.save();
     }
     res.json({ message: "Admin ensured", email, password });
-  } catch (e) {
-    res.status(500).json({ message: e.message });
+  } catch (e:unknown) {
+    const error = e as Error;
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -173,8 +174,9 @@ export const verifyOtp = async (req:Request , res:Response) => {
     // (Alternatively skip this and re-check OTP again during reset)
     const shortToken = createToken(otpDoc._id.toString());
     res.json({ message: "OTP verified", token: shortToken });
-  } catch (e) {
-    res.status(500).json({ message: e.message });
+  } catch (e:unknown) {
+    const error = e as Error;
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -206,8 +208,9 @@ export const resetPassword = async (req:Request, res:Response) => {
     await otpDoc.save();
 
     res.json({ message: "Password reset successful" });
-  } catch (e) {
-    res.status(500).json({ message: e.message });
+  } catch (e:unknown) {
+    const error = e as Error;
+    res.status(500).json({ message: error.message });
   }
 };
 

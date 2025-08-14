@@ -79,11 +79,12 @@
 
 
 import { Request, Response } from 'express';
+import { MulterRequest } from '../types/multer';
 import departmentModel from '../models/departmentModel';
 import path from 'path';
 import fs from 'fs';
 
-export const getDepartment = async (req, res) => {
+export const getDepartment = async (req:Request, res:Response) => {
   try {
     const { code } = req.params;
     const department = await departmentModel.find();
@@ -97,7 +98,7 @@ export const getDepartment = async (req, res) => {
 };
 
 
-export const getDepartmentByCode = async (req, res) => {
+export const getDepartmentByCode = async (req:Request, res:Response) => {
   try {
     const { code } = req.params;
     const department = await departmentModel.find({code});
@@ -111,62 +112,60 @@ export const getDepartmentByCode = async (req, res) => {
 };
 
 
-export const updateDepartmentByCode = async (req, res) => {
-  try {
-    const { _id } = req.params;
-    const {
-      name,
-      about,
-      hodName,
-      hodMessage,
-      vision,
-      mission,
-      faculty,
-    } = req.body;
-
-    const department = await departmentModel.findOne({ _id });
-    if (!department) {
-      return res.status(404).json({ error: 'Department not found' });
-    }
-
-    department.name = name || department.name;
-    department.about = about || department.about;
-    department.hodName = hodName || department.hodName;
-    department.hodMessage = hodMessage || department.hodMessage;
-    department.vision = vision || department.vision;
-    department.mission = mission ? JSON.parse(mission) : department.mission;
-    department.faculty = faculty ? JSON.parse(faculty) : department.faculty;
-
-    // Replace images if uploaded
-    if (req.files?.heroImage) {
-      const heroPath = path.join(__dirname, '..', 'uploads', department.heroImage);
-      if (department.heroImage && fs.existsSync(heroPath)) {
-      fs.unlinkSync(heroPath);
+export const updateDepartmentByCode = async (req: MulterRequest, res: Response) => {
+    try {
+        const { _id } = req.params;
+        const {
+          name,
+          about,
+          hodName,
+          hodMessage,
+          vision,
+          mission,
+          faculty,
+        } = req.body;
+  
+        const department = await departmentModel.findOne({ _id });
+        if (!department) {
+          return res.status(404).json({ error: 'Department not found' });
+        }
+  
+        department.name = name || department.name;
+        department.about = about || department.about;
+        department.hodName = hodName || department.hodName;
+        department.hodMessage = hodMessage || department.hodMessage;
+        department.vision = vision || department.vision;
+        department.mission = mission ? JSON.parse(mission) : department.mission;
+        department.faculty = faculty ? JSON.parse(faculty) : department.faculty;
+  
+        // Replace images if uploaded
+        if (req.files?.heroImage) {
+          const heroPath = path.join(__dirname, '..', 'uploads', department.heroImage);
+          if (department.heroImage && fs.existsSync(heroPath)) {
+          fs.unlinkSync(heroPath);
+          }
+  
+          department.heroImage = req.files.heroImage[0].filename;
+        }
+  
+        if (req.files?.hodImage) {
+            const hodPath = path.join(__dirname, '..', 'uploads', department.hodImage);
+            if (department.hodImage && fs.existsSync(hodPath)) {
+            fs.unlinkSync(hodPath);
+          }
+          department.hodImage = req.files.hodImage[0].filename;
+        }
+  
+        const updated = await department.save();
+        res.status(200).json(updated);
+  
+      } catch (error) {
+        res.status(500).json({ error: error instanceof Error ? error.message : 'Something went wrong while updating' });
       }
-
-      department.heroImage = req.files.heroImage[0].filename;
-    }
-
-    if (req.files?.hodImage) {
-        const hodPath = path.join(__dirname, '..', 'uploads', department.hodImage);
-        if (department.hodImage && fs.existsSync(hodPath)) {
-        fs.unlinkSync(hodPath);
-      }
-      department.hodImage = req.files.hodImage[0].filename;
-    }
-
-    const updated = await department.save();
-    res.status(200).json(updated);
-
-  } catch (err) {
-  console.error('Update error:', err);  // already done ✅
-  res.status(500).json({ error: err.message || 'Something went wrong while updating' }); // <-- update this
-}
-
 };
 
 
-export const addDepartment = async (req: Request, res: Response) => {
+export const addDepartment = async (req: MulterRequest, res: Response) => {
   try {
     const {
       code,

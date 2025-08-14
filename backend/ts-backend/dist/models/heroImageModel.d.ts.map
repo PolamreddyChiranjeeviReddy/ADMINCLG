@@ -1,0 +1,1 @@
+{"version":3,"file":"heroImageModel.d.ts","sourceRoot":"","sources":["../../src/models/heroImageModel.ts"],"names":[],"mappings":"AAAA,OAAO,QAAQ,EAAE,EAAU,QAAQ,EAAE,MAAM,UAAU,CAAC;AAEtD,MAAM,WAAW,iBAAkB,SAAQ,QAAQ;IACjD,KAAK,EAAE,MAAM,CAAC;IACd,YAAY,EAAE,MAAM,CAAC;IACrB,WAAW,EAAE,MAAM,CAAC;CACrB;AAUD,QAAA,MAAM,cAAc,2CAE6C,CAAC;AAElE,eAAe,cAAc,CAAC"}
