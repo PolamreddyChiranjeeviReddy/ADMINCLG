@@ -4,7 +4,7 @@
 
 // const StoreContextProvider = (props) => {
 
-//     const url = "http://localhost:5000"
+//     const url = "adminclg-backend.vercel.app";
 //     // const [food_list, setFoodList] = useState([]);
 //     // const [cartItems, setCartItems] = useState({});
 //     const [render,setRender] = useState(false);
@@ -60,7 +60,7 @@ export const StoreContext = createContext<StoreContextType | null>(null);
 
 const StoreContextProvider = (props: StoreContextProviderProps) => {
 
-    const url = "http://localhost:5000"
+    const url = "adminclg-backend.vercel.app"
     // const [food_list, setFoodList] = useState([]);
     // const [cartItems, setCartItems] = useState({});
     const [render,setRender] = useState(false);
