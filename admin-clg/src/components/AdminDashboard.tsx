@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import type { CSSProperties } from 'react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { StoreContext } from '../context/StoreContext';
 
@@ -443,7 +443,7 @@ const AdminDashboard = () => {
     const [error, setError] = useState<string | null>(null);
 
     const context = useContext(StoreContext) as StoreContextType | null;
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const menuConfig = {
         'Departments': { endpoint: 'department', 
@@ -544,7 +544,7 @@ const AdminDashboard = () => {
 
 
     
-    const handleDeleteItem = async (_id: string, code?: string) => {
+    const handleDeleteItem = async (_id: string) => {
         const [menu] = activeView.split(' > ');
         const config = menuConfig[menu as keyof typeof menuConfig];
         if (!config || !window.confirm('Are you sure you want to delete this item?')) return;
