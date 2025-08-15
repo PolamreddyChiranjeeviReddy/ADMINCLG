@@ -6,6 +6,7 @@ import { StoreContext } from '../context/StoreContext';
 
 // --- Type Definitions ---
 interface StoreContextType {
+    url: string;
     token: string;
     setToken: (token: string) => void;
     setRender: (render: boolean) => void;
@@ -76,8 +77,8 @@ const isDepartment = (item: any): item is Department => {
 // };
 
 // --- API Configuration ---
-// const API_BASE_URL = 'https://adminclg-backend.vercel.app'; // IMPORTANT: Change to your backend URL
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";   // Use environment variable or fallback to <localhost></localhost>
+const API_BASE_URL = 'https://adminclg-backend.vercel.app'; // IMPORTANT: Change to your backend URL
+// const API_BASE_URL = "https://adminclg-backend.vercel.app" || "http://localhost:5000";   // Use environment variable or fallback to <localhost></localhost>
     
 
 // --- SVG Icons ---
@@ -504,7 +505,7 @@ const AdminDashboard = () => {
             const response = await fetch(`${API_BASE_URL}/api/${config.endpoint}/${listRoute}`);
             if (!response.ok) throw new Error(`Failed to fetch ${menu}`);
             const data = await response.json();
-            console.log(data);
+            // console.log(data);
             setItems(Array.isArray(data) ? data : []);
             console.log("here    ",items);
         } catch (err: any) { setError(err.message); setItems([]); } finally { setLoading(false); }
