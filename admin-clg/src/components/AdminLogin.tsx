@@ -398,7 +398,7 @@ const AdminLogin = () => {
      return <div>Loading...</div>;
    }
 
-   const { setToken, url, token, render, setRender } = context;
+   const { setToken, url,setRender } = context;
 
     const [data, setData] = useState({
         email: "",
