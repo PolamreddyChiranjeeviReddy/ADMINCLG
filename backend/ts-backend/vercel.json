@@ -11,7 +11,7 @@
       "src": "/(.*)",
       "dest": "dist/server.js",
       "headers": {
-        "Access-Control-Allow-Origin": "https://adminclg.vercel.app",
+        "Access-Control-Allow-Origin": "https://vignansadminpanel.vercel.app/",
         "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
         "Access-Control-Allow-Headers": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
