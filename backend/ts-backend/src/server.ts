@@ -99,7 +99,7 @@ app.use(helmet());
 // }));
 // app.use(cors({ origin: true, credentials: true }));
 app.use(cors({
-    origin: ['https://vignansadminpanel.vercel.app/', 'https://adminclg-9tcbkh770-polamreddy-chiranjeevi-reddys-projects.vercel.app','https://adminclg-git-main-polamreddy-chiranjeevi-reddys-projects.vercel.app'],
+    origin: ['https://vignansadminpanel.vercel.app', 'https://adminclg-9tcbkh770-polamreddy-chiranjeevi-reddys-projects.vercel.app','https://adminclg-git-main-polamreddy-chiranjeevi-reddys-projects.vercel.app'],
     credentials: true
 }));
 // app.use(express.json());
