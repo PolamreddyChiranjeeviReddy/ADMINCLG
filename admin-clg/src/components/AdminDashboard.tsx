@@ -6,7 +6,7 @@ import { StoreContext } from '../context/StoreContext';
 
 // --- Type Definitions ---
 interface StoreContextType {
-    url: string;
+    // url: string;
     token: string;
     setToken: (token: string) => void;
     setRender: (render: boolean) => void;
